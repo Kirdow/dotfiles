@@ -1,0 +1,7 @@
+require("core.plugin_config.nerdtree")
+require("core.plugin_config.lsp_config")
+require("core.plugin_config.treesitter")
+require("core.plugin_config.telescope")
+require("core.plugin_config.coc")
+require("core.plugin_config.neogit")
+require("core.plugin_config.colors")
