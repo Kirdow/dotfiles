@@ -64,7 +64,31 @@ enable('rust_analyzer', {
     }
 })
 
-enable_all({"ts_ls", "clangd", "gopls", "kotlin_language_server", "groovy_language_server"})
+-- clangd: search common build dirs for compile_commands.json
+local function find_compile_commands_dir()
+    local root = vim.fs.root(0, { '.git', 'CMakeLists.txt', 'compile_commands.json' }) or vim.fn.getcwd()
+    -- Check project root first, then common build directory names
+    local candidates = { root, 'build', 'bin', 'out', 'cmake-build-debug', 'cmake-build-release' }
+    for _, dir in ipairs(candidates) do
+        local path = dir
+        if not vim.startswith(dir, '/') then
+            path = root .. '/' .. dir
+        end
+        if vim.fn.filereadable(path .. '/compile_commands.json') == 1 then
+            return path
+        end
+    end
+    return nil
+end
+
+local clangd_cmd = { 'clangd' }
+local ccd = find_compile_commands_dir()
+if ccd then
+    table.insert(clangd_cmd, '--compile-commands-dir=' .. ccd)
+end
+
+enable('clangd', { cmd = clangd_cmd })
+enable_all({"ts_ls", "gopls", "kotlin_language_server", "groovy_language_server"})
 
 -- Disable lspconfig's jdtls - nvim-jdtls handles Java via FileType autocmd
 vim.lsp.enable('jdtls', false)
@@ -81,6 +105,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
     end,

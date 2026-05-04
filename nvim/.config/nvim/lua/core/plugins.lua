@@ -18,7 +18,11 @@ return require('packer').startup(function(use)
     use 'tpope/vim-commentary'
     use 'vim-airline/vim-airline'
     use 'rafi/awesome-vim-colorschemes'
-    use 'nvim-treesitter/nvim-treesitter'
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        lazy = false,
+        build = ':TSUpdate'
+    }
     use 'nvim-lua/plenary.nvim'
     use 'sindrets/diffview.nvim'
     use 'neogitorg/neogit'
@@ -39,13 +43,17 @@ return require('packer').startup(function(use)
 
     use {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.4',
+        tag = 'v0.2.2',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
 
     use 'kirdow/gruvbox.nvim'
     --use 'navarasu/onedark.nvim'
-    use 'sainnhe/gruvbox-material'
+    use {
+        'sainnhe/gruvbox-material',
+        commit = '90f5d20'
+        --commit = '1cfbad9'
+    }
 
     use {
         'kirdow/claude-code.nvim',
@@ -55,6 +63,15 @@ return require('packer').startup(function(use)
         config = function()
             require('claude-code').setup({
                 command = "./claude.sh",
+            })
+        end
+    }
+
+    use {
+        '3rd/image.nvim',
+        config = function()
+            require('image').setup({
+                backend = "kitty",
             })
         end
     }

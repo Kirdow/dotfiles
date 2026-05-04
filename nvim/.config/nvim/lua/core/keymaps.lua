@@ -31,16 +31,46 @@ vim.keymap.set('n', '<leader>fc', ':lua FixComment()<CR>', { noremap = true, sil
 vim.keymap.set('n', '<leader>cs', ':lua ToggleThemeTransparency()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>fe', ':lua FixEolToggle()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>fi', ':lua FixIndent()<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ti', ':lua ToggleImages()<CR>', { noremap = true, silent = true })
+
+vim.keymap.set('n', 'zz', 'za', { noremap = true, silent = true })
+
+local function file_exists(name)
+    local f = io.open(name, "r")
+    if f ~= nil then io.close(f) return true else return false end
+end
 
 function RunScriptInTerminal(test)
     local win_height = vim.api.nvim_win_get_height(0)
     local term_height = math.floor(win_height * 1)
 
     vim.cmd('botright ' .. term_height .. 'split')
-    if test then
-        vim.cmd('terminal ./run.sh --test')
+    local cwd = vim.fn.getcwd()
+    if cwd:find('probe/kirbot') then
+        vim.cmd('terminal bash -c "./validate.sh; read -rp \\"Press Enter to close...\\" "')
+    elseif test then
+        if file_exists("./run.sh") then
+            vim.cmd('terminal ./run.sh --test')
+        elseif file_exists("./run") then
+            vim.cmd('terminal ./run --test')
+        else
+            --print("./run or ./run.sh not found")
+        end
     else
-        vim.cmd('terminal ./run.sh')
+        local prefix = ''
+        if file_exists("./build.sh") then
+            prefix = './build.sh && '
+        elseif file_exists("./build") then
+            prefix = './build && '
+        end
+
+        if file_exists("./run.sh") then
+            vim.cmd('terminal ' .. prefix .. './run.sh')
+        elseif file_exists("./run") then
+            vim.cmd('terminal ' .. prefix .. './run')
+        else
+            --print("./run or ./run.sh not found")
+        end
     end
     vim.cmd('autocmd TermClose <buffer> ++once :q!')
     vim.cmd('startinsert')
@@ -80,6 +110,17 @@ function FixEolToggle()
     else
         vim.bo.fixeol = true
         print("auto EOL: on")
+    end
+end
+
+function ToggleImages()
+    local img = require("image")
+    if img.is_enabled() then
+        img.disable()
+        print("images: off")
+    else
+        img.enable()
+        print("images: on")
     end
 end
 
