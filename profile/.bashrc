@@ -8,14 +8,38 @@
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias web='w3m duckduckgo.com/lite/'
+alias ssh='kitten ssh'
+alias externalip='curl -sS https://ysap.sh/ip'
+alias ncdu='ncdu -x'
+
 PS1='[\u@\h \W]\$ '
 
 if [[ -d "$HOME/.local/share/bin" ]]; then
 	export PATH="$HOME/.local/share/bin:$PATH"
 fi
 
+if [[ -d "$HOME/.local/bin" ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
-[[ -f "/usr/share/nvm/init-nvm.sh" ]] && . /usr/share/nvm/init-nvm.sh
+[[ -f "/usr/share/nvm/init-nvm.sh" ]] && . /usr/share/nvm/init-nvm.sh && nvm use default --silent
+
+smartresize() {
+    mogrify -path $3 -filter Triangle -define filter:support=2 -thumbnail $2 -unsharp 0.25x0.08+8.3+0.045 -dither None -posterize 136 -quality 82 -define jpeg:fancy-upsampling=off -define png:compression-filter=5 -define png:compression-level=9 -define png:compression-strategy=1 -define png:exclude-chunk=all -interlace none -colorspace sRGB $1
+}
+
+print_args() {
+  local i=0
+  for arg in "$@"; do
+    echo "$i: [$arg]"
+    ((i++))
+  done
+}
+
+branches() {
+    git branch -l | wc -l | awk '{ print "This repository has " $1 " branches."; }'
+}
 
 dev() {
     if [[ ! -d "$HOME/Documents/dev/" ]]; then
@@ -114,6 +138,8 @@ line() {
     head -$1 | tail -1
 }
 
+alias hytale='cd ~/.var/app/com.hypixel.HytaleLauncher/data/Hytale/UserData/Saves/Mopds/mods/'
+
 # Alias to view an image in kitty
 alias img='kitten icat --align=left'
 
@@ -139,6 +165,9 @@ fi
 # Alias for running protontricks when installed through flatpak
 alias protontricks='flatpak run com.github.Matoking.protontricks'
 
+# Force cinny to use X11 with compositing disabled to avoid blank window
+alias cinny='WEBKIT_DISABLE_COMPOSITING_MODE=1 GDK_BACKEND=x11 cinny'
+
 # Set the currently installed vulkan version.
 VULKAN_VERSION="1.3.296.0"
 
@@ -153,6 +182,17 @@ if [ -d "$HOME/probe/clai/build/debug" ]; then
     alias clai="Clai"
 fi
 
+# Add new Clai
+if [ -d "$HOME/probe/clai/bin" ]; then
+    PATH="$HOME/probe/clai/bin:$PATH"
+
+    clai() {
+        sudo systemctl start ollama
+        $(which clai)
+        sudo systemctl stop ollama
+    }
+fi
+
 # Add speedtest-cli to path if it exists
 if [ -f "$HOME/Apps/speedtest/speedtest" ]; then
     PATH="$HOME/Apps/speedtest:$PATH"
@@ -164,6 +204,10 @@ unset VULKAN_VERSION
 # secure-askpass configuration
 if [[ -f "$HOME/probe/askpass/askpass" ]]; then
     export SUDO_ASKPASS="$HOME/probe/askpass/askpass"
+fi
+
+if [[ -d "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin" ]]; then
+    export PATH="$PATH:$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
 #if [[ -f "/usr/bin/fastfetch" ]]; then
