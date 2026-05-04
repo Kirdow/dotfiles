@@ -42,10 +42,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id systemctl --user import-environment DISPLAY XAUTHORITY
 
 # PolicyKit agent for mounting drives etc
-exec --no-startup-id /usr/lib/polkit-kde-authentication-agent-1
-
-# Set Swedish keyboard layout
-exec --no-startup-id setxkbmap se
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # Load Xresources (cursor settings)
 exec --no-startup-id xrdb -merge ~/.Xresources
@@ -61,6 +58,12 @@ exec --no-startup-id xrandr --output DP-2 --mode 2560x1440 --rate 180 --rotate l
 
 # FAH (Folding @ Home) auto restart to fix GPU
 exec --no-startup-id ./scripts/fix-fah.sh
+
+# Nitrogen (Wallpaper)
+exec --no-startup-id nitrogen --restore
+
+# keyboard language 
+exec --no-startup-id setxkbmap -layout se,ru -variant ,phonetic -option grp:alt_shift_toggle
 
 # Workspace to monitor assignments
 workspace 1 output DP-0
@@ -90,12 +93,23 @@ bindsym $mod+Shift+m exec emacs
 # start zen browser
 bindsym $mod+b exec zen-browser
 
+# send Right arrow to Zen on workspace 3 (no focus steal)
+bindsym $mod+c exec --no-startup-id ~/.local/share/bin/zen-send-key 3 Right
+bindsym $mod+ctrl+c exec --no-startup-id ~/.local/share/bin/zen-send-key 3 Right
+
+# start discord
+bindsym $mod+d exec discord
+
+# toggle mouse
+# bindsym $mod+p exec --no-startup-id ~/.local/share/bin/toggle-mouse
+
 # kill focused window
 bindsym $mod+Shift+q kill
 bindsym $mod+w kill
 
 # start dmenu (a program launcher)
 bindsym $mod+space exec --no-startup-id rofi -show drun
+
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
@@ -106,6 +120,10 @@ bindsym $mod+n exec --no-startup-id rofi -show calc
 bindsym $mod+Shift+space exec --no-startup-id rofi -show calc
 # screenshot region selector
 bindsym $mod+Shift+s exec --no-startup-id flameshot gui
+
+# start cmenu (a script launcher)
+bindsym Mod1+space exec --no-startup-id /home/kirdow/probe/cmenu/target/release/cmenu
+
 
 # change focus
 bindsym $mod+h focus left
@@ -198,12 +216,13 @@ bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
 # reload the configuration file
-bindsym $mod+Shift+c reload
+bindsym $mod+ctrl+r reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+m exec i3-msg exit
+bindsym $mod+m exec "i3-nagbar -t warning -m 'Exit to Login?' -B 'Yes' 'i3-msg exit'"
+#bindsym $mod+m exec i3-msg exit
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -232,8 +251,16 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+for_window [class="steam_app_271590"] floating enable
+for_window [class="steam_app_271590"] move position center
+
+for_window [class="steam_app_0" title="^Overwatch$"] fullscreen enable
+
+popup_during_fullscreen smart
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3status
+        status_command ~/.config/i3status/wrapper.sh
+        #status_command ~/.local/share/bin/i3extra
 }

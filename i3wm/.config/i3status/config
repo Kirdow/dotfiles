@@ -8,6 +8,7 @@
 
 general {
         colors = true
+        output_format = "i3bar"
         interval = 5
 }
 
