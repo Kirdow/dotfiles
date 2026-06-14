@@ -176,6 +176,11 @@ _G.packer_plugins = {
     path = "/home/kirdow/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "https://github.com/nvim-lua/plenary.nvim"
   },
+  ["roslyn.nvim"] = {
+    loaded = true,
+    path = "/home/kirdow/.local/share/nvim/site/pack/packer/start/roslyn.nvim",
+    url = "https://github.com/seblyng/roslyn.nvim"
+  },
   ["telescope.nvim"] = {
     loaded = true,
     path = "/home/kirdow/.local/share/nvim/site/pack/packer/start/telescope.nvim",
@@ -199,14 +204,14 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: image.nvim
-time([[Config for image.nvim]], true)
-try_loadstring("\27LJ\2\nH\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\fbackend\nkitty\nsetup\nimage\frequire\0", "config", "image.nvim")
-time([[Config for image.nvim]], false)
 -- Config for: claude-code.nvim
 time([[Config for claude-code.nvim]], true)
 try_loadstring("\27LJ\2\nT\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\fcommand\16./claude.sh\nsetup\16claude-code\frequire\0", "config", "claude-code.nvim")
 time([[Config for claude-code.nvim]], false)
+-- Config for: image.nvim
+time([[Config for image.nvim]], true)
+try_loadstring("\27LJ\2\nH\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\fbackend\nkitty\nsetup\nimage\frequire\0", "config", "image.nvim")
+time([[Config for image.nvim]], false)
 
 _G._packer.inside_compile = false
 if _G._packer.needs_bufread == true then
