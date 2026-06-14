@@ -3,7 +3,7 @@
 #
 
 # If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# [[ $- != *i* ]] && return
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
@@ -85,7 +85,25 @@ fi
 probe() {
     if [ -z "$1" ]; then
         # ls -a ~/probe | tail +3 | awk '{ t = t $1 " " } END { print t }'
-        ls -A ~/probe
+        local CDP_PATH
+        local TARGET
+        CDP_PATH="$HOME/probe/cdp/target/dist/cdp"
+        if [[ -f "$CDP_PATH" ]]; then
+            TARGET=$(command $CDP_PATH)
+            CDP_RC=$?
+            if (( CDP_RC != 0 )); then
+                echo "Failed to cd-probe."
+            elif [[ -z "$TARGET" ]]; then
+                return
+            elif [[ ! -d "$TARGET" ]]; then
+                echo "Return cd-probe path invalid."
+            else
+                echo "Entering $(basename "$TARGET")..."
+                cd $TARGET
+            fi
+        else
+            ls -A ~/probe
+        fi
     else
         cd ~/probe/"$1"
     fi
@@ -193,9 +211,19 @@ if [ -d "$HOME/probe/clai/bin" ]; then
     }
 fi
 
+# Add khar
+if [ -d "$HOME/probe/khar/build/" ]; then
+    PATH="$HOME/probe/khar/build:$PATH"
+fi
+
 # Add speedtest-cli to path if it exists
 if [ -f "$HOME/Apps/speedtest/speedtest" ]; then
     PATH="$HOME/Apps/speedtest:$PATH"
+fi
+
+# Add gcc-cross to path if it exists
+if [ -d "$HOME/opt/cross/bin" ]; then
+    PATH="$HOME/opt/cross/bin:$PATH"
 fi
 
 # Unset above VULKAN_VERSION as it may be used by wrapper scripts in other parts of the system. It's NOT a global variable.
@@ -213,3 +241,5 @@ fi
 #if [[ -f "/usr/bin/fastfetch" ]]; then
     # /usr/bin/fastfetch --pipe false --logo none --structure OS:Kernel:Shell:Memory | awk '{ print "    " $0; }'
 #fi
+
+[ -f "/home/kirdow/.ghcup/env" ] && . "/home/kirdow/.ghcup/env" # ghcup-env

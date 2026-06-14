@@ -53,8 +53,8 @@ exec --no-startup-id flameshot
 # Mouse settings: sensitivity -0.45, flat acceleration
 exec --no-startup-id ./scripts/sensitivity.sh
 
-# Monitor setup: DP-2 left (vertical), DP-0 center (primary), HDMI-0 right
-exec --no-startup-id xrandr --output DP-2 --mode 2560x1440 --rate 180 --rotate left --pos 0x0 --output DP-0 --mode 2560x1440 --rate 180 --primary --pos 1440x560 --output HDMI-0 --mode 2560x1440 --pos 4000x560
+# Monitor setup: DP-0 left (vertical), DP-2 center (primary), HDMI-0 right
+exec --no-startup-id xrandr --output DP-0 --mode 2560x1440 --rate 180 --rotate left --pos 0x0 --output DP-2 --mode 2560x1440 --rate 180 --primary --pos 1440x560 --output HDMI-0 --mode 2560x1440 --pos 4000x560
 
 # FAH (Folding @ Home) auto restart to fix GPU
 exec --no-startup-id ./scripts/fix-fah.sh
@@ -62,13 +62,19 @@ exec --no-startup-id ./scripts/fix-fah.sh
 # Nitrogen (Wallpaper)
 exec --no-startup-id nitrogen --restore
 
-# keyboard language 
+# keyboard language
 exec --no-startup-id setxkbmap -layout se,ru -variant ,phonetic -option grp:alt_shift_toggle
 
+# Notification daemon
+exec --no-startup-id dunst
+
+# F13-F24 keysyms (must run after setxkbmap, which resets the keymap)
+exec_always --no-startup-id xmodmap ~/.xmodmaprc
+
 # Workspace to monitor assignments
-workspace 1 output DP-0
+workspace 1 output DP-2
 workspace 2 output HDMI-0
-workspace 3 output DP-2
+workspace 3 output DP-0
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
