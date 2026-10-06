@@ -28,16 +28,42 @@ vim.keymap.set('n', '<F43>', ':lua RunScriptInTerminal(true)<CR>', { noremap = t
 vim.keymap.set('n', '<leader>cc', '<cmd>ClaudeCode<CR>', { desc = 'Toggle Claude Code' })
 vim.keymap.set('n', '<leader>fc', ':lua FixComment()<CR>', { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader>cs', ':lua ToggleThemeTransparency()<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>cs', ':lua ToggleColorScheme()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>fe', ':lua FixEolToggle()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>fi', ':lua FixIndent()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>ti', ':lua ToggleImages()<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>tt', ':lua ToggleThemeTransparency()<CR>', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>sc', ':lua SpawnConsole()<CR>', { noremap = true, silent = true })
+vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-n>]])
 
 vim.keymap.set('n', 'zz', 'za', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader><F1>', ':lua ToggleConfigReadme()<CR>', { noremap = true, silent = true })
+
+-- load the session for the current directory
+vim.keymap.set('n', '<leader>qs', function() require("persistence").load() end)
+
+-- select a session to load
+vim.keymap.set('n', '<leader>qS', function() require("persistence").select() end)
+
+-- load the last session
+vim.keymap.set('n', '<leader>ql', function() require("persistence").load({ last = true }) end)
+
+-- stop Persistence => session won't be saved on exit
+vim.keymap.set('n', '<leader>qd', function() require("persistence").stop() end)
 
 local function file_exists(name)
     local f = io.open(name, "r")
     if f ~= nil then io.close(f) return true else return false end
+end
+
+function SpawnConsole()
+    local win_width = vim.api.nvim_win_get_width(0)
+    local term_width = math.floor(win_width * 0.5)
+
+    vim.cmd('botright ' .. term_width .. 'vsplit')
+    vim.cmd('terminal')
 end
 
 function RunScriptInTerminal(test)
@@ -81,6 +107,23 @@ function ToggleThemeTransparency()
         vim.cmd.colorscheme('gruvbox')
     elseif vim.g.colors_name == 'gruvbox' then
         vim.cmd.colorscheme('gruvbox-material')
+    elseif vim.g.colors_name == 'kirdow-simple' then
+        require('kirdow-simple').toggle_transparent()
+    end
+end
+
+function ToggleColorScheme()
+    if vim.g.colors_name == 'gruvbox-material' then
+        vim.cmd [[ colorscheme gruvbox ]]
+    elseif vim.g.colors_name == 'gruvbox' then
+        vim.cmd [[ colorscheme gruvbox-material ]]
+    elseif vim.g.colors_name == 'kirdow-simple' or vim.g.colors_name == 'kirdow-simple-dark' then
+        if require('kirdow-simple').is_transparent() then
+            require('kirdow-simple').toggle_transparent()
+        end
+        vim.cmd [[ colorscheme kirdow-simple-light ]]
+    elseif vim.g.colors_name == 'kirdow-simple-light' then
+        vim.cmd [[ colorscheme kirdow-simple ]]
     end
 end
 
@@ -129,6 +172,11 @@ function FixIndent()
     for i = 16, 1, -1 do
         local tabs = string.rep("\\t", i)
         local spaces = string.rep("    ", i)
-        vim.cmd('%s/^' .. spaces .. '/' .. tabs .. '/ge')
+        vim.cmd('%s/^' .. tabs .. '/' .. spaces .. '/ge')
     end
+end
+
+function ToggleConfigReadme()
+    local file = vim.fn.stdpath("config") .. "/lua/core/readme.txt"
+    vim.cmd("split " .. file .. " | setlocal nomodifiable")
 end
