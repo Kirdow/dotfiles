@@ -1,13 +1,28 @@
+-- Flags
+local DEBUG = false
+
+-- Debug
+
+function log(p)
+    if DEBUG then
+        print(p)
+    end
+end
+
+-- Main Code
+
 function ptoc(p)
     return p * 255
 end
+
 
 local DARKEN_TOP = 1.1
 local DARKEN_NORMAL = 0.84
 local DARKEN_EDGE = 0.9
 local DARKEN_BOTTOM = 0.8
 
-if app.apiVersion < 1 then
+log("API Version: " .. app.apiVersion)
+if app.apiVersion < 41 then
     return app.alert("Unsupported app Version")
 end
 
@@ -92,31 +107,55 @@ function createVoid(solidAlpha, includeAlpha)
         return app.alert("Unsupported color mode")
     end
 
-    local x = 0
-    local y = 0
+    function recEquals(a, b)
+        if b == nil and a == nil then return true end
+        if b == nil or a == nil then return false end
+        return a.x == b.x and a.y == b.y and a.w == b.w and a.h == b.h
+    end
 
-    local h = math.floor(app.activeSprite.height / 4)
+    local bounds = app.sprite.selection.bounds
+    if recEquals(app.sprite.bounds, app.sprite.selection.bounds) or bounds == nil then
+        bounds = app.sprite.bounds
+    end
 
-    for it in img:pixels() do
+    log("Bounds: (x" .. bounds.x .. " y" .. bounds.y .. " w" .. bounds.w .. " h" .. bounds.h .. ")")
+    log("Image (x" .. img.bounds.x .. " y" .. img.bounds.y .. " w" .. img.bounds.width .. " h" .. img.bounds.height .. ")")
+
+    local pos = function(it)
+        return {
+            x = it.x - bounds.x,
+            y = it.y - bounds.y
+        }
+    end
+
+    local w = bounds.w
+    local h = math.floor(bounds.h / 4)
+
+    log("(w" .. w .. " h" .. h .. ")")
+
+    local lastY = -1
+    for it in img:pixels(bounds) do
+        local p = pos(it)
+        if p.y ~= lastY then
+            lastY = p.y
+            log("Y: " .. p.y)
+        end
+        if p.y == 0 then
+            log("X: " .. p.x)
+        end
         local c = it()
-        if y > h then
+        if p.y > h then
             it(nextVoid())
-        elseif x == 0 or x == app.activeSprite.width - 1 then
-            local isTop = (y == 0)
-            local isBottom = (y == h)
+        elseif p.x == 0 or p.x == w - 1 then
+            local isTop = (p.y == 0)
+            local isBottom = (p.y == h)
             it(nextEdge(c, isTop, isBottom))
-        elseif y == h then
+        elseif p.y == h then
             it(nextBottom(c))
-        elseif y == 0 then
+        elseif p.y == 0 then
             it(nextTop(c))
         else
             it(nextNormal(c))
-        end
-
-        x = x + 1
-        if x >= app.activeSprite.width then
-            x = 0
-            y = y + 1
         end
     end
 

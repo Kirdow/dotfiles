@@ -11,7 +11,7 @@ function userInput()
     local dlg = Dialog("Tex Noise")
     
     dlg:color{id="fg", label="Foreground", color=app.fgColor}
-    dlg:color{id="bg", label="Background", color=app.fgColor}
+    dlg:color{id="bg", label="Background", color=app.bgColor}
     dlg:check{id="alpha", label="Include Alpha", selected=false}
     dlg:button{id="ok", text="OK"}
     dlg:button{id="cancel", text="Cancel"}
