@@ -39,8 +39,6 @@ vim.keymap.set('t', '<Esc><Esc>', [[<C-\><C-n>]])
 
 vim.keymap.set('n', 'zz', 'za', { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader><F1>', ':lua ToggleConfigReadme()<CR>', { noremap = true, silent = true })
-
 -- load the session for the current directory
 vim.keymap.set('n', '<leader>qs', function() require("persistence").load() end)
 
@@ -174,9 +172,4 @@ function FixIndent()
         local spaces = string.rep("    ", i)
         vim.cmd('%s/^' .. tabs .. '/' .. spaces .. '/ge')
     end
-end
-
-function ToggleConfigReadme()
-    local file = vim.fn.stdpath("config") .. "/lua/core/readme.txt"
-    vim.cmd("split " .. file .. " | setlocal nomodifiable")
 end

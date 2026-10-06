@@ -37,6 +37,7 @@ require('lazy').setup({
     { 'sainnhe/gruvbox-material', commit = '90f5d20' --[[commit = '1cfbad9']], priority = 1000 },
 
     'https://git.ktnuity.com/kirdow/kirdowsimple.nvim',
+    'https://git.ktnuity.com/kirdow/kirdowhelp.nvim',
 
     {
         'kirdow/claude-code.nvim',
