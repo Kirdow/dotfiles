@@ -74,7 +74,7 @@ enable('rust_analyzer', {
 local function find_compile_commands_dir()
     local root = vim.fs.root(0, { '.git', 'CMakeLists.txt', 'compile_commands.json' }) or vim.fn.getcwd()
     -- Check project root first, then common build directory names
-    local candidates = { root, 'build', 'bin', 'out', 'cmake-build-debug', 'cmake-build-release' }
+    local candidates = { root, 'build', 'build/linux', 'build/macos', 'bin', 'out', 'cmake-build-debug', 'cmake-build-release' }
     for _, dir in ipairs(candidates) do
         local path = dir
         if not vim.startswith(dir, '/') then
