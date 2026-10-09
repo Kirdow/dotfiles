@@ -16,8 +16,10 @@ PREFIX    | MAPPING      |      Description
             <C-F7>      <=>     Runs project-specific run-scripts in a terminal.
             <C-s-F7>    <=>     Runs project-specific test-scripts in a terminal.
 
-<leader>    tt          <=>     Toggle Theme Transparency
 <leader>    cs          <=>     Toggle ColorScheme
+<leader>    tt          <=>     Toggle Theme Transparency
+<leader>    ss          <=>     Toggle Screenshot Mode
+
 <leader>    fi          <=>     Fix Indent
 <leader     ti          <=>     Toggle Images
 <leader>    sc          <=>     Spawn Console

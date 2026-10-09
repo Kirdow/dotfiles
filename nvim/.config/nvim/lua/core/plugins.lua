@@ -34,9 +34,12 @@ require('lazy').setup({
 
     'kirdow/gruvbox.nvim',
     --'navarasu/onedark.nvim',
-    { 'sainnhe/gruvbox-material', commit = '90f5d20' --[[commit = '1cfbad9']], priority = 1000 },
 
-    'https://git.ktnuity.com/kirdow/kirdowsimple.nvim',
+    -- Using this instead of github.com/sainnhe/gruvbox-material as I prefer an older version
+    --  + it has some fixes not present in the commit hash it's based on.
+    { 'https://git.ktnuity.com/kirdow/gruvbox-material', priority = 1000 },
+
+    { 'https://git.ktnuity.com/kirdow/kirdowsimple.nvim', priority = 1000 },
     'https://git.ktnuity.com/kirdow/kirdowhelp.nvim',
 
     {

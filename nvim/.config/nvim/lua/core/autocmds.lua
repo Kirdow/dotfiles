@@ -3,9 +3,8 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	callback = function()
 		if vim.g.WebDevIconsUnicodeDecorateFileNodesExactSymbols and vim.g.WebDevIconsUnicodeDecorateFileNodesExactSymbols["robots.txt"] then
 			vim.g.WebDevIconsUnicodeDecorateFileNodesExactSymbols["robots.txt"] = nil
-			print("Remmoved Robots")
 		else
-			print("Failed to remove robots")
+            vim.notify("Failed to remove robots", vim.log.levels.WARN)
 		end
 	end,
 })
