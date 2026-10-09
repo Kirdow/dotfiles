@@ -1,14 +1,29 @@
-require'nvim-treesitter'.setup {
-    -- A list of parser names, or "all"
-    ensure_installed = { "c", "cpp", "c_sharp", "lua", "rust", "ruby", "java", "kotlin", "groovy", "vim", "html", "php", "typescript" },
+local ts = require('nvim-treesitter')
 
-    -- Install parsers synchronously (and applied to `ensure_installed`)
-    sync_install = true,
-    auto_install = true,
-    highlight = {
-        enable = true,
-    },
-}
+ts.setup()
+
+-- Parsers to always have installed (async, no-op if already present)
+ts.install({ "c", "cpp", "c_sharp", "lua", "rust", "ruby", "java", "kotlin", "groovy", "vim", "vimdoc", "query", "html", "php", "typescript" })
+
+-- Enable highlighting per buffer, auto installing missing parsers
+vim.api.nvim_create_autocmd('FileType', {
+    callback = function(args)
+        local buf = args.buf
+        local lang = vim.treesitter.language.get_lang(args.match)
+        if not lang then return end
+
+        local function start()
+            if not vim.api.nvim_buf_is_valid(buf) then return false end
+            if not pcall(vim.treesitter.start, buf, lang) then return false end
+            vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+            return true
+        end
+
+        if not start() and vim.tbl_contains(ts.get_available(), lang) then
+            ts.install(lang):await(vim.schedule_wrap(start))
+        end
+    end,
+})
 
 function custom_foldtext()
     local line = vim.fn.getline(vim.v.foldstart)

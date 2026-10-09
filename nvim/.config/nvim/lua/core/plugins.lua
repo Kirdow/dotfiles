@@ -10,7 +10,7 @@ require('lazy').setup({
     'tpope/vim-commentary',
     'vim-airline/vim-airline',
     'rafi/awesome-vim-colorschemes',
-    { 'nvim-treesitter/nvim-treesitter', lazy = false, build = ':TSUpdate' },
+    { 'nvim-treesitter/nvim-treesitter', branch = 'main', lazy = false, build = ':TSUpdate' },
     'nvim-lua/plenary.nvim',
     'sindrets/diffview.nvim',
     'neogitorg/neogit',
